@@ -2,10 +2,18 @@ doctype html
 html
   head
     title= title
-    script(src='/js/enchant.js')
-    script(src='/js/game.js')
-    link(rel='stylesheet', href='/css/style.css')
+    meta(http-equiv="Content-Type", content="text/html, charaset=UTF-8")
+    meta(name="format-detection" content="telephone=no")
+    meta(name="viewport" content="user-scalable=0, initial-scale=1, maximum-scale=1, width=device-width, height=device-height")
+    meta(name="msapplication-tap-highlight" content="no")
   body
+    // CSS Content
+    link(rel='stylesheet', href='/css/style.css')
+    // JS Content
+    script(src='/js/enchant.js')
+    script(src='/js/ui.enchant.js')
+    script(src='/js/game.js')
+    script(src='/js/map.js')
     block content
 
 

@@ -1,8 +1,16 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+@-ms-viewport{
+  user-zoom:fixed;
+  max-zoom:2;
+  min-zoom:2;
 }
 
-a {
-  color: #00B7FF;
+body, hhml {
+  margin: 0;
+  overflow: hidden;
+  -ms-content-zooming: none;
+  -ms-overflow-style: none !important;
+  background-color: #A8A8A8;
+  width: 720px;
+  height: 480px;
 }
+
