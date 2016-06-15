@@ -20,6 +20,8 @@ window.onload = function () {
   var map = new Map(game.spriteWidth, game.spriteHeight);
   var foregroundMap = new Map(game.spriteWidth, game.spriteHeight);
 
+  var spriteRoles = [];
+
   var setMaps = function() {
     map.image = game.assets['../img/sprites.png'];
     map.loadData(mapData);
@@ -54,18 +56,18 @@ window.onload = function () {
     game.currentScene.addChild(buttonA);
     
     buttonA.ontouchstart = function() {
-      //var playerFacing = player.facing();
+      var playerFacing = player.facing();
 
-      //if (!playerFacing || !spriteRoles[playerFacing]) {
+      if (!playerFacing || !spriteRoles[playerFacing]) {
         player.displayStatus();
-      //}else{
-      //  spriteRoles[playerFacing].action();
-      //};
+      } else {
+        spriteRoles[playerFacing].action();
+      };
     }
 
 
     stage.addChild(foregroundMap);
-    
+    stage.addChild(player.statusLabel);
     game.rootScene.addChild(stage);
   }
 
@@ -175,9 +177,39 @@ window.onload = function () {
     }
   };
 
+  player.square = function(){
+      return {x: Math.floor(this.x / game.spriteWidth), y: Math.floor(this.y / game.spriteHeight) };
+  };
+
+  player.facingSquare = function(){
+    var playerSquare = player.square();
+    var facingSquare;
+    if(player.direction === 0){
+      facingSquare = { x:playerSquare.x, y: playerSquare.y + 1}
+    } else if (player.direction === 1){
+      facingSquare = { x:playerSquare.x, y: playerSquare.y - 1}
+    }else if (player.direction === 2){
+      facingSquare = { x:playerSquare.x + 1, y: playerSquare.y}
+    }else if (player.direction === 3){
+      facingSquare = { x:playerSquare.x - 1, y: playerSquare.y}
+    }
+    if ((facingSquare.x < 0 || facingSquare >= map.width / 32) ||(facingSquare.y < 0 || facingSquare >= map.height / 32)){
+      return null;
+    }else{
+      return facingSquare;
+    }
+  };
+
+  player.facing = function(){
+    var facingSquare = player.facingSquare();
+    if(!facingSquare){
+      return null;
+    } else {
+      return foregroundData[facingSquare.y][facingSquare.x];
+    }
+  }
+
   game.onload = function () {
-
-
     setMaps();
     setPlayer();
     setStage();
@@ -187,19 +219,19 @@ window.onload = function () {
     player.on('enterframe', function(){
       player.move();
       if(game.input.a){
-      //  var playerFacing = player.facing();
-      //  if(!playerFacing || !spriteRoles[playerFacing]){
+        var playerFacing = player.facing();
+        if(!playerFacing || !spriteRoles[playerFacing]){
           player.displayStatus();
-      //  }else{
-      //    spriteRoles[playerFacing].action;
-      //  };
+        }else{
+          spriteRoles[playerFacing].action;
+        };
       };
     });
 
 
-    //game.rootScene.on('enterframe', function(e) {
-    //  game.focusViewport();
-    //});
+    game.rootScene.on('enterframe', function(e) {
+      //game.focusViewport();
+    });
   };
   game.start();
 }
