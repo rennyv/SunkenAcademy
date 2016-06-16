@@ -47,7 +47,7 @@
 /**
  * @type {Object}
  */
-enchant.ui = { assets: ['pad.png', 'apad.png', 'icon0.png', 'font0.png'] };
+enchant.ui = { assets: ['../img/pad.png', '../img/apad.png', '../img/icon0.png', '../img/font0.png'] };
 
 /**
  * 方向キーパッドのクラス: Pad
@@ -61,7 +61,7 @@ enchant.ui.Pad = enchant.Class.create(enchant.Sprite, {
      */
     initialize: function() {
         var core = enchant.Core.instance;
-        var image = core.assets['pad.png'];
+        var image = core.assets['../img/pad.png'];
         enchant.Sprite.call(this, image.width / 2, image.height);
         this.image = image;
         this.input = { left: false, right: false, up: false, down: false };
@@ -124,7 +124,7 @@ enchant.ui.APad = enchant.Class.create(enchant.Group, {
      */
     initialize: function(mode) {
         var core = enchant.Core.instance;
-        var image = core.assets['apad.png'];
+        var image = core.assets['../img/apad.png'];
         var w = this.width = image.width;
         var h = this.height = image.height;
         enchant.Group.call(this);
@@ -544,7 +544,7 @@ enchant.ui.MutableText = enchant.Class.create(enchant.Sprite, {
             }
             x = charPos % this.widthItemNum;
             y = (charPos / this.widthItemNum) | 0;
-            this.image.draw(enchant.Game.instance.assets['font0.png'],
+            this.image.draw(enchant.Game.instance.assets['../img/font0.png'],
                 x * this.fontSize, y * this.fontSize, this.fontSize, this.fontSize,
                 (i % this.row) * this.fontSize, ((i / this.row) | 0) * this.fontSize, this.fontSize, this.fontSize);
         }
@@ -708,7 +708,7 @@ enchant.ui.LifeLabel = enchant.Class.create(enchant.Group, {
         this.heart = [];
         for (var i = 0; i < this._maxlife; i++) {
             this.heart[i] = new enchant.Sprite(16, 16);
-            this.heart[i].image = enchant.Game.instance.assets['icon0.png'];
+            this.heart[i].image = enchant.Game.instance.assets['../img/icon0.png'];
             this.heart[i].x = this.label.width + i * 16;
             this.heart[i].y = -3;
             this.heart[i].frame = 10;
