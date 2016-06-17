@@ -19,7 +19,7 @@ window.onload = function () {
   var map = new Map(game.spriteWidth, game.spriteHeight);
   var foregroundMap = new Map(game.spriteWidth, game.spriteHeight);
 
-  var spriteRoles = [];
+  
 
   var setMaps = function() {
     map.image = game.assets['../img/sprites.png'];
@@ -236,7 +236,30 @@ window.onload = function () {
       }
   };
 
+//end player
 
+  var npc = {
+      say: function (message){
+          player.statusLabel.height = 18;
+          player.statusLabel.text = message;
+      }
+  };
+
+  var greeter = {
+    action: function(){
+      npc.say("Hello!");
+    }
+  };
+
+  var shopScene = new Scene();
+
+  var shopkeep = {
+    action: function(){
+
+    }
+  };
+
+  var spriteRoles = [, , greeter, ];
 
   game.onload = function () {
     setMaps();
@@ -252,7 +275,7 @@ window.onload = function () {
         if(!playerFacing || !spriteRoles[playerFacing]){
           player.displayStatus();
         }else{
-          spriteRoles[playerFacing].action;
+          spriteRoles[playerFacing].action();
         };
       };
     });
