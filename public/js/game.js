@@ -115,6 +115,7 @@ window.onload = function () {
             '--' + player.name + ' the ' + player.characterClass +
             '<br />--HP: ' + player.hp + '/' + player.levelStats[player.level].maxHp +
             '<br />--MP: ' + player.mp + '/' + player.levelStats[player.level].maxMp +  
+            '<br />--Atk: ' + player.levelStats[player.level].attack +
             '<br />--Exp: ' + player.exp +
             '<br />--Level: ' + player.level +
             '<br />--GP: ' + player.gp +
