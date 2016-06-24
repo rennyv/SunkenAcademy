@@ -534,7 +534,7 @@ window.onload = function () {
                 this.addChild(itemDescription);
 
                 if(i === this.itemSelected) {
-                    var image = new Surface(game.spriteSheetWidth, game.spriteSheetHeight);
+                    image = new Surface(game.spriteSheetWidth, game.spriteSheetHeight);
                     this.itemSelector = new Sprite(game.spriteWidth, game.spriteHeight);
                     image.draw(game.assets['../img/sprites.png']);
                     itemLocationX = 30 + 70 * i;
