@@ -1,12 +1,12 @@
 enchant();
 window.onload = function () {
-    var game = new Game(window.screen.height, window.screen.width);
+    var game = new Game(320, 320);
   
     game.keybind(32, 'a');
     game.spriteSheetWidth = 512;
     game.spriteSheetHeight = 32;
     game.itemSpriteSheetWidth = 128; 
-    game.preload(['../img/items.png', '../img/sprites.png']); 
+    game.preload(['../img/items.png', '../img/map1.gif', '../img/chara0.gif']); 
     game.items = [{ price: 1000, decription: 'Hurter', id: 0},
         {price: 5000, decription: 'Drg. Paw', id: 1 },
         {price: 5000, decription: 'Ice Magic', id: 2},
@@ -16,15 +16,15 @@ window.onload = function () {
     game.spriteHeight = 32;
     game.scale = 1.0;
 
-    var map = new Map(game.spriteWidth, game.spriteHeight);
-    var foregroundMap = new Map(game.spriteWidth, game.spriteHeight);
+    var map = new Map(16, 16);
+    var foregroundMap = new Map(16,16);
  
     var setMaps = function() {
-        map.image = game.assets['../img/sprites.png'];
-        map.loadData(mapData);
-        foregroundMap.image = game.assets['../img/sprites.png'];
+        map.image = game.assets['../img/map1.gif'];
+        map.loadData(mapData1, mapData2);
+        foregroundMap.image = game.assets['../img/map1.gif'];
         foregroundMap.loadData(foregroundData);
-        var collisionData = [];
+        /*var collisionData = [];
         
         for(var i = 0; i < foregroundData.length; i++ ) {
             collisionData.push([]);
@@ -32,7 +32,7 @@ window.onload = function () {
                 var collision = foregroundData[i][j] % 13 > 1 ? 1 : 0;
                 collisionData[i][j] = collision;
             }
-        }
+        }*/
         map.collisionData = collisionData;
     };
 
@@ -40,10 +40,13 @@ window.onload = function () {
         var stage = new Group();
         stage.addChild(map);
         stage.addChild(player);
+        stage.addChild(foregroundMap);
+        stage.addChild(player.statusLabel);
+        game.rootScene.addChild(stage);
 
         var pad = new enchant.ui.Pad();
-        pad.moveTo(0, 650);
-        stage.addChild(pad);
+        pad.moveTo(0, 220);
+        game.rootScene.addChild(pad);
 
         var buttonB = new enchant.ui.Button('B', 'light');
         buttonB.moveTo(180,710);
@@ -63,24 +66,27 @@ window.onload = function () {
             }
         };
 
-        stage.addChild(foregroundMap);
-        stage.addChild(player.statusLabel);
-        game.rootScene.addChild(stage);
+        game.rootScene.addEventListener('enterframe', function(e) {
+            var x = Math.min((game.width  - 16) / 2 - player.x, 0);
+            var y = Math.min((game.height - 16) / 2 - player.y, 0);
+            x = Math.max(game.width,  x + map.width)  - map.width;
+            y = Math.max(game.height, y + map.height) - map.height;
+            stage.x = x;
+            stage.y = y;
+        });
     };
 
-    var player = new Sprite(game.spriteWidth, game.spriteHeight);
+    var player = new Sprite(32, 32);
 
     var setPlayer = function(){
         player.spriteOffset = 5;
-        player.startingX = 6;
-        player.startingY = 14;
-        player.x = player.startingX * game.spriteWidth;
-        player.y = player.startingY * game.spriteHeight;
+        player.x = 6 * 16 - 8;
+        player.y = 10 * 16;
         player.direction = 0;
         player.walk = 0;
         player.frame = player.spriteOffset + player.direction;
-        player.image = new Surface(game.spriteSheetWidth, game.spriteSheetHeight);
-        player.image.draw(game.assets['../img/sprites.png']);
+        player.image = new Surface(96, 128);
+        player.image.draw(game.assets['../img/chara0.gif'], 0, 0, 96, 128, 0, 0, 96, 128);
 
         player.name = 'Steve';
         player.characterClass = 'Knight';
@@ -131,47 +137,42 @@ window.onload = function () {
     };
 
     player.move = function() {
-        this.frame = this.spriteOffset + this.direction * 2 + this.walk;
-
-        if(this.isMoving){
-            this.moveBy(this.xMovement, this.yMovement);
-            if(!(game.frame % 2)){
-                this.walk++;
-                this.walk %= 2;
-            }
-            if ((this.xMovement && this.x % 32 === 0) || (this.yMovement && this.y % 32 === 0)) {
-                this.isMoving = false;
-                this.walk = 1;
-            }
-        } else {
-            this.xMovement = 0;
-            this.yMovement = 0;
-            if(game.input.up) {
-                this.direction = 1;
-                this.yMovement = -4;
-                player.clearStatus();
-            } else if (game.input.right){
-                this.direction = 2;
-                this.xMovement = 4;
-                player.clearStatus();
-            } else if (game.input.left){
-                this.direction = 3;
-                this.xMovement = -4;
-                player.clearStatus();
-            } else if (game.input.down){
-                this.direction = 0;
-                this.yMovement = 4;
-                player.clearStatus();
-            }
-            if(this.xMovement || this.yMovement){
-                var x = this.x + (this.xMovement ? this.xMovement / Math.abs(this.xMovement) * 32 : 0  );
-                var y = this.y + (this.yMovement ? this.yMovement / Math.abs(this.yMovement) * 32 : 0 );
-                if(0<=x&& x < map.width && 0 <= y && y < map.height && !map.hitTest(x,y)){
-                    this.isMoving = true;
-                    this.move();
+            this.frame = this.direction * 3 + this.walk;
+            if (this.isMoving) {
+                this.moveBy(this.vx, this.vy);
+ 
+                if (!(game.frame % 3)) {
+                    this.walk++;
+                    this.walk %= 3;
+                }
+                if ((this.vx && (this.x-8) % 16 == 0) || (this.vy && this.y % 16 == 0)) {
+                    this.isMoving = false;
+                    this.walk = 1;
+                }
+            } else {
+                this.vx = this.vy = 0;
+                if (game.input.left) {
+                    this.direction = 1;
+                    this.vx = -4;
+                } else if (game.input.right) {
+                    this.direction = 2;
+                    this.vx = 4;
+                } else if (game.input.up) {
+                    this.direction = 3;
+                    this.vy = -4;
+                } else if (game.input.down) {
+                    this.direction = 0;
+                    this.vy = 4;
+                }
+                if (this.vx || this.vy) {
+                    var x = this.x + (this.vx ? this.vx / Math.abs(this.vx) * 16 : 0) + 16;
+                    var y = this.y + (this.vy ? this.vy / Math.abs(this.vy) * 16 : 0) + 16;
+                    if (0 <= x && x < map.width && 0 <= y && y < map.height && !map.hitTest(x, y)) {
+                        this.isMoving = true;
+                        arguments.callee.call(this);
+                    }
                 }
             }
-        }
     };
 
     player.square = function(){
@@ -407,7 +408,7 @@ window.onload = function () {
 
         battle.addCombatants = function() {
             var image = new Surface(game.spriteSheetWidth, game.spriteSheetHeight);
-            image.draw(game.assets['../img/sprites.png']);
+           // image.draw(game.assets['../img/sprites.png']);
             battle.player = new Sprite(game.spriteWidth, game.spriteHeight);
             battle.player.image = image;
             battle.player.frame = 7;
@@ -499,7 +500,7 @@ window.onload = function () {
             var image = new Surface(game.spriteSheetWidth, game.spriteSheetHeight);
             var shopkeeper = new Sprite(game.spriteWidth, game.spriteHeight);
       
-            image.draw(game.assets['../img/sprites.png']);
+           // image.draw(game.assets['../img/sprites.png']);
             shopkeeper.image = image;
             shopkeeper.frame = 4;
             shopkeeper.y = 10;
@@ -537,7 +538,7 @@ window.onload = function () {
                 if(i === this.itemSelected) {
                     image = new Surface(game.spriteSheetWidth, game.spriteSheetHeight);
                     this.itemSelector = new Sprite(game.spriteWidth, game.spriteHeight);
-                    image.draw(game.assets['../img/sprites.png']);
+                  // image.draw(game.assets['../img/sprites.png']);
                     itemLocationX = 30 + 70 * i;
                     itemLocationY = 160;
                     this.itemSelector.x = itemLocationX;
@@ -624,10 +625,6 @@ window.onload = function () {
         shopScene.addChild(shopButtonA);
     };
 
-    game.focusViewport = function() {
-        //unknown
-    };
-
     game.onload = function () {
         setMaps();
         setPlayer();
@@ -645,10 +642,6 @@ window.onload = function () {
                     spriteRoles[playerFacing].action();
                 }
             }
-        });
-
-        game.rootScene.on('enterframe', function(e) {
-            //game.focusViewport();
         });
     };
     game.start();
