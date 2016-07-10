@@ -4,6 +4,18 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var config = require('./config');
+
+//mongoose models
+require('./models/user');
+
+var mongoose = require('mongoose');
+mongoose.connect(config.dbConnection);
+var session = require('express-session');
+var passport = require('passport');
+//var api = require('./routes/api');
+var authenticate = require('./routes/authenticate')(passport);
+
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -17,13 +29,20 @@ app.set('view engine', 'pug');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
+app.use(session({
+  secret: config.secretHash
+}));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', routes);
-app.use('/users', users);
+app.use('/users', users);  //do i need this?
+app.use('/auth', authenticate);
+//app.use('/api', api);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -31,6 +50,10 @@ app.use(function(req, res, next) {
   err.status = 404;
   next(err);
 });
+
+// Initialize Passport
+var initPassport = require('./passport-init');
+initPassport(passport);
 
 // error handlers
 
