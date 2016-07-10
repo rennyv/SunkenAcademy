@@ -1,12 +1,16 @@
 enchant();
 window.onload = function () {
     var game = new Game(320, 320);
-  
     game.keybind(32, 'a');
+
+    game.mapSprite = '../img/map1.gif';
+    game.characterSprite = '../img/chara0.gif';
+    game.itemsSprite = '../img/items.png';
+
     game.spriteSheetWidth = 512;
     game.spriteSheetHeight = 32;
     game.itemSpriteSheetWidth = 128; 
-    game.preload(['../img/items.png', '../img/map1.gif', '../img/chara0.gif']); 
+    game.preload([game.mapSprite, game.characterSprite, game.itemsSprite]); 
     game.items = [{ price: 1000, decription: 'Hurter', id: 0},
         {price: 5000, decription: 'Drg. Paw', id: 1 },
         {price: 5000, decription: 'Ice Magic', id: 2},
@@ -14,15 +18,14 @@ window.onload = function () {
     game.fps = 15;
     game.spriteWidth = 32;
     game.spriteHeight = 32;
-    game.scale = 1.0;
 
     var map = new Map(16, 16);
     var foregroundMap = new Map(16,16);
  
     var setMaps = function() {
-        map.image = game.assets['../img/map1.gif'];
+        map.image = game.assets[game.mapSprite];
         map.loadData(mapData1, mapData2);
-        foregroundMap.image = game.assets['../img/map1.gif'];
+        foregroundMap.image = game.assets[game.mapSprite];
         foregroundMap.loadData(foregroundData);
         /*var collisionData = [];
         
@@ -49,12 +52,12 @@ window.onload = function () {
         game.rootScene.addChild(pad);
 
         var buttonB = new enchant.ui.Button('B', 'light');
-        buttonB.moveTo(180,710);
-        game.currentScene.addChild(buttonB);
+        buttonB.moveTo(0, 230);
+        game.rootScene.addChild(buttonB);
 
         var buttonA = new enchant.ui.Button('A', 'blue');
-        buttonA.moveTo(230,710);
-        game.currentScene.addChild(buttonA);
+        buttonA.moveTo(0,120);
+        game.rootScene.addChild(buttonA);
     
         buttonA.ontouchstart = function() {
             var playerFacing = player.facing();
@@ -86,7 +89,7 @@ window.onload = function () {
         player.walk = 0;
         player.frame = player.spriteOffset + player.direction;
         player.image = new Surface(96, 128);
-        player.image.draw(game.assets['../img/chara0.gif'], 0, 0, 96, 128, 0, 0, 96, 128);
+        player.image.draw(game.assets[game.characterSprite], 0, 0, 96, 128, 0, 0, 96, 128);
 
         player.name = 'Steve';
         player.characterClass = 'Knight';
@@ -220,7 +223,7 @@ window.onload = function () {
 
     player.showInventory = function(yOffset) {
         if(player.visibleItems.length === 0){
-            player.itemSurface.draw(game.assets['../img/items.png']);
+            player.itemSurface.draw(game.assets[game.itemsSprite]);
             for ( var i = 0; i < player.inventory.length; i++){
                 var item = new Sprite(game.spriteWidth, game.spriteHeight);
                 item.y = 130 + yOffset;
@@ -518,7 +521,7 @@ window.onload = function () {
             for(var i = 0; i < game.items.length; i ++){
                 var image = new Surface(game.itemSpriteSheetWidth, game.spriteSheetHeight);
                 var item = new Sprite(game.spriteWidth, game.spriteHeight);
-                image.draw(game.assets['../img/items.png']);
+                image.draw(game.assets[game.itemsSprite]);
                 itemLocationX = 30 + 70 * i;
                 itemLocationY = 70;
                 item.y = itemLocationY;
@@ -538,7 +541,7 @@ window.onload = function () {
                 if(i === this.itemSelected) {
                     image = new Surface(game.spriteSheetWidth, game.spriteSheetHeight);
                     this.itemSelector = new Sprite(game.spriteWidth, game.spriteHeight);
-                  // image.draw(game.assets['../img/sprites.png']);
+                  // image.draw(game.assets[game.itemsSprite]);
                     itemLocationX = 30 + 70 * i;
                     itemLocationY = 160;
                     this.itemSelector.x = itemLocationX;
